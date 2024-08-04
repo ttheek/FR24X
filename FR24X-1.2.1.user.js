@@ -7,13 +7,12 @@
 // @match        https://www.flightradar24.com/*
 // @grant        none
 // @license      Unlicense license
+// @downloadURL https://update.greasyfork.org/scripts/502595/FR24X.user.js
+// @updateURL https://update.greasyfork.org/scripts/502595/FR24X.meta.js
 // ==/UserScript==
 
 (function() {
-    'use strict';
-    /* User's coordinates. Will be set by setUserData using local storage or
-   default values.
-*/
+    'use strict';    
     const observer = JSON.parse(localStorage.getItem('location'));
     const R = 6371; // Earth's radius in km
     const toRadians = angle => angle * (Math.PI / 180);
@@ -65,7 +64,6 @@ function initialBearing(lat1, lon1, lat2, lon2) {
 function toDeg(radians){
 	return radians * (180/Math.PI);
 }
-    // Function to create and inject the overlay into the page
 function createOverlay() {
     const overlay = document.createElement('div');
     overlay.className = 'overlay';
@@ -238,17 +236,12 @@ function createOverlay() {
             localStorage.setItem('location', JSON.stringify(location));
             alert('Location saved!');
         });
-
-
 }
 
-
-// Function to parse altitude string
 function parseAltitude(altitudeString) {
   return parseFloat(altitudeString.replace(/,/g, '').replace(/[^\d.]/g, ''));
 }
 
-// Function to wait for a specific element to appear in the DOM
 function waitForElement(selector, timeout = 5000) {
   return new Promise((resolve, reject) => {
     const element = document.querySelector(selector);
@@ -277,13 +270,11 @@ function waitForElement(selector, timeout = 5000) {
   });
 }
     function isBelowHorizon(lat1, lon1, alt1, lat2, lon2, alt2) {
-    // Calculate the horizon distance
+    
     const horizonDistance = altitude => Math.sqrt(2 * R * (altitude / 1000) + (altitude / 1000) ^ 2);
 
-    // Calculate the great-circle distance between the observer and the aircraft
     const distance = haversineDistance(lat1, lon1, lat2, lon2);
 
-    // Calculate the horizon distances
     const observerHorizon = horizonDistance(alt1);
     const aircraftHorizon = horizonDistance(alt2);
 
@@ -299,7 +290,6 @@ function spotIt(observer,aircraft){
  return {d:distance.toFixed(2),b:bearing.toFixed(0),horizon:belowHorizon};
 }
 
-// Function to get aircraft data
 function getAircraftData() {
   const selectors = {
     latitude: 'p.text-md.leading-tight.text-gray-1300[data-testid="aircraft-panel__lat"]',
@@ -323,7 +313,6 @@ function getAircraftData() {
   };
 }
 
-// Function to update the overlay with aircraft data
 function updateOverlay(data) {
     const distance = document.getElementById('distance');
     const bearing = document.getElementById('bearing');
@@ -345,14 +334,12 @@ function updateOverlay(data) {
   }
 }
 
-// Function to update data and overlay
 function updateData() {
   const data = getAircraftData();
-  console.log('Updated data:', data);
+  //console.log('Updated data:', data);
   updateOverlay(data);
 }
 
-// Function to monitor aircraft data
 async function monitorAircraftData() {
   const selectors = [
     'p.text-md.leading-tight.text-gray-1300[data-testid="aircraft-panel__lat"]',
